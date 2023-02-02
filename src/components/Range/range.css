@@ -1,0 +1,37 @@
+.range {
+  position: relative;
+  height: 30px;
+  background-color: lightgray;
+  border-radius: 15px;
+  cursor: grab;
+}
+
+.min, .max {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  text-align: center;
+  user-select: none;
+}
+
+.circle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: white;
+  margin: auto;
+  transition: transform 0.2s ease-in-out;
+}
+
+.min:active .circle, .max:active .circle {
+  transform: scale(1.2);
+}
+
+.minValue, .maxValue {
+  font-size: 12px;
+  margin-top: 5px;
+  color: gray;
+}
+
+

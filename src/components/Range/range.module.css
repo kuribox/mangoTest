@@ -1,0 +1,68 @@
+.range {
+  position: relative;
+  height: 30px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bar {
+  background-color: gray;
+  width: 100%;
+  height: 5px;
+}
+
+.selectedBar {
+  background-color: lightgray;
+  width: 100%;
+  height: 5px;
+  z-index: 2;
+  position: absolute;
+  left: 0;
+}
+
+.min,
+.max {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.min {
+  left: 0;
+}
+
+.max {
+  left: 0;
+}
+
+.circle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: gray;
+  z-index: 3;
+}
+
+.minValue,
+.maxValue {
+  position: absolute;
+  bottom: -20px;
+  font-size: 12px;
+}
+
+.minValue {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.maxValue {
+  right: 50%;
+  transform: translateX(50%);
+}
