@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import Home from "./views/Home";
-import Exercice1 from "./views/Exercice1";
-import Exercice2 from "./views/Exercice2";
+import Exercise1 from "./views/Exercise1";
+import Exercise2 from "./views/Exercise2";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.scss";
@@ -14,11 +14,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/exercise1",
-    element: <Exercice1 />,
+    element: <Exercise1 />,
   },
   {
     path: "/exercise2",
-    element: <Exercice2 />,
+    element: <Exercise2 />,
   },
 ]);
 
