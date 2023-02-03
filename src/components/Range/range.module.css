@@ -1,3 +1,20 @@
+.container {
+  flex-direction: row;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.value {
+  padding-left: 10px;
+  padding-right: 10px;
+  color: white;
+  font-weight: bold;
+  font-family: monospace;
+  text-align: center;
+}
+
 .range {
   position: relative;
   height: 30px;
@@ -22,8 +39,7 @@
   left: 0;
 }
 
-.min,
-.max {
+.point {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -32,13 +48,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.min {
-  left: 0;
-}
-
-.max {
   left: 0;
 }
 
@@ -48,6 +57,11 @@
   border-radius: 50%;
   background-color: gray;
   z-index: 3;
+}
+
+.dragging .circle {
+  width: 25px;
+  height: 25px;
 }
 
 .minValue,
