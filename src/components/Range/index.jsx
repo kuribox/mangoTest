@@ -2,16 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./range.module.css";
 import Point from "./Point";
+import Label from "./Label";
 
-const Range = ({
-  min = 30,
-  max = 40,
-  values, // = [5, 10, 909, 30.5],
-  suffix = "€",
-  step = 2,
-  onChange,
-  fontSize = 15,
-}) => {
+const Range = ({ min, max, values, suffix, step, onChange, fontSize }) => {
   const [minValue, setMinValue] = useState(null);
   const [maxValue, setMaxValue] = useState(null);
 
@@ -57,9 +50,20 @@ const Range = ({
 
   return (
     <div ref={ref} className={styles.container}>
-      <div className={styles.value} style={{ fontSize, width: labelSize }}>
-        {suffix ? `${result.min} ${suffix}` : result.min}
-      </div>
+      <Label
+        text={String(result.min)}
+        suffix={suffix}
+        style={{ fontSize, width: labelSize }}
+        enableEdit={!values}
+        onChange={(value) => {
+          if (isNaN(Number(value))) return false;
+          if (!(Number(value) >= min && Number(value) <= result.max))
+            return false;
+          if (Number(value) >= result.max) return false;
+
+          setResult({ ...result, min: Number(value) });
+        }}
+      />
       <div style={{ flex: 1 }}>
         {(!values || (values && values.length > 1)) && (
           <div className={styles.range}>
@@ -78,6 +82,7 @@ const Range = ({
               values={values}
               offset={labelSize}
               pointWidth={30}
+              value={result.min}
               defaultValue={minValue}
               limitMax={maxValue}
               width={width}
@@ -95,6 +100,7 @@ const Range = ({
               offset={labelSize}
               pointWidth={30}
               defaultValue={maxValue}
+              value={result.max}
               limitMin={minValue}
               width={width}
               onChange={(r, val) => {
@@ -105,9 +111,20 @@ const Range = ({
           </div>
         )}
       </div>
-      <div className={styles.value} style={{ fontSize, width: labelSize }}>
-        {suffix ? `${result.max} ${suffix}` : result.max}
-      </div>
+      <Label
+        text={String(result.max)}
+        suffix={suffix}
+        style={{ fontSize, width: labelSize }}
+        enableEdit={!values}
+        onChange={(value) => {
+          if (isNaN(Number(value))) return false;
+          if (!(Number(value) >= min && Number(value) <= result.max))
+            return false;
+          if (Number(value) <= result.min) return false;
+
+          setResult({ ...result, max: Number(value) });
+        }}
+      />
     </div>
   );
 };
@@ -123,8 +140,11 @@ Range.propTypes = {
 };
 
 Range.defaultProps = {
+  min: 1,
+  max: 10,
   step: 1,
   fontSize: 15,
+  suffix: "",
 };
 
 export default Range;

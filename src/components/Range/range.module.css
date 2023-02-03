@@ -80,3 +80,11 @@
   right: 50%;
   transform: translateX(50%);
 }
+
+.input {
+  width: 100%;
+}
+
+.editable {
+  cursor: pointer;
+}

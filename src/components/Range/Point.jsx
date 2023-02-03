@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useCallback, useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./range.module.css";
 
@@ -14,6 +14,7 @@ const Range = ({
   pointWidth,
   defaultValue,
   width,
+  value: valueProp,
 }) => {
   const [value, setValue] = useState(null);
   const [result, setResult] = useState(null);
@@ -24,24 +25,48 @@ const Range = ({
 
   const pointRef = useRef(null);
 
+  const getPointStep = useCallback(
+    (value) => {
+      return value * ((width - pointWidth) / maxSteps);
+    },
+    [width, pointWidth, maxSteps]
+  );
+
+  const getPointPosition = useCallback(
+    (value) => {
+      return Math.round(value / ((width - pointWidth) / maxSteps));
+    },
+    [width, pointWidth, maxSteps]
+  );
+
   useEffect(() => {
     if (defaultValue) {
       if (values) {
-        const stepValue = Math.round(
-          defaultValue / ((width - pointWidth) / maxSteps)
-        );
+        const stepValue = getPointPosition(defaultValue);
 
-        setValue(stepValue * ((width - pointWidth) / maxSteps) + pointWidth);
+        setValue(getPointStep(stepValue) + pointWidth);
         setResult(values[stepValue]);
       } else {
-        const stepValue = Math.round(
-          (defaultValue - min) / ((width - pointWidth) / maxSteps)
-        );
-        setValue(stepValue * ((width - pointWidth) / maxSteps) + pointWidth);
+        const stepValue = getPointPosition(defaultValue - min);
+        setValue(getPointStep(stepValue) + pointWidth);
         setResult(defaultValue + min);
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (valueProp && valueProp !== result) {
+      setResult(valueProp);
+
+      const newValue = values
+        ? getPointStep(values.findIndex((v) => v === valueProp)) + pointWidth
+        : getPointStep(valueProp - min) + pointWidth;
+
+      setValue(newValue);
+
+      if (onChange) onChange(valueProp, newValue);
+    }
+  }, [valueProp]);
 
   // Update drag position
   const handleDrag = (e) => {
@@ -76,38 +101,38 @@ const Range = ({
 
     let stepValue = null;
     if (values) {
-      stepValue = Math.round(
-        (e.clientX - offset) / ((width - pointWidth) / maxSteps)
-      );
+      stepValue = getPointPosition(e.clientX - offset);
 
-      if (!values[stepValue])
-        stepValue = Math.round(
-          defaultValue / ((width - pointWidth) / maxSteps)
-        );
+      if (!values[stepValue]) stepValue = getPointPosition(defaultValue);
 
-      if (limitMin && e.clientX - offset <= limitMin)
-        stepValue =
-          Math.round(limitMin / ((width - pointWidth) / maxSteps)) + 1;
+      if (limitMin) {
+        const limitPoint = getPointPosition(limitMin);
+        if (e.clientX - offset <= limitMin || stepValue <= limitPoint)
+          stepValue = limitPoint + 1;
+      }
 
-      if (limitMax && e.clientX - offset >= limitMax)
-        stepValue =
-          Math.round(limitMax / ((width - pointWidth) / maxSteps)) - 1;
+      if (limitMax) {
+        const limitPoint = getPointPosition(limitMax);
+        if (e.clientX - offset >= limitMax || stepValue >= limitPoint)
+          stepValue = limitPoint - 1;
+      }
 
       setResult(values[stepValue]);
     } else {
-      stepValue = Math.round(
-        (e.clientX - offset) / ((width - pointWidth) / maxSteps)
-      );
+      stepValue = getPointPosition(e.clientX - offset);
 
       if (stepValue % step !== 0) stepValue = stepValue - (stepValue % step);
 
-      if (limitMin && e.clientX - offset <= limitMin)
-        stepValue =
-          Math.round(limitMin / ((width - pointWidth) / maxSteps)) + step;
+      if (limitMin) {
+        const limitPoint = getPointPosition(limitMin - pointWidth);
+        if (e.clientX - offset <= limitMin || stepValue <= limitPoint)
+          stepValue = limitPoint + step;
+      }
 
-      if (limitMax && e.clientX - offset >= limitMax) {
-        stepValue =
-          Math.round(limitMax / ((width - pointWidth) / maxSteps)) - step;
+      if (limitMax) {
+        const limitPoint = getPointPosition(limitMax - pointWidth);
+        if (e.clientX - offset >= limitMax || stepValue >= limitPoint)
+          stepValue = limitPoint - step;
       }
 
       setResult(stepValue + min);
