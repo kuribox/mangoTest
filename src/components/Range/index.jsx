@@ -35,7 +35,7 @@ const Range = ({ min, max, values, suffix, step, onChange, fontSize }) => {
 
     seLabelSize(LabelSize);
 
-    // Valores iniciales
+    // initial values
     setMinValue(30);
     setMaxValue(ref.current.parentNode.offsetWidth - 2 * LabelSize);
 

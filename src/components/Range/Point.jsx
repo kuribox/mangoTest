@@ -25,6 +25,7 @@ const Range = ({
 
   const pointRef = useRef(null);
 
+  // calc point real step
   const getPointStep = useCallback(
     (value) => {
       return value * ((width - pointWidth) / maxSteps);
@@ -32,6 +33,7 @@ const Range = ({
     [width, pointWidth, maxSteps]
   );
 
+  // calc point x position
   const getPointPosition = useCallback(
     (value) => {
       return Math.round(value / ((width - pointWidth) / maxSteps));
@@ -39,6 +41,7 @@ const Range = ({
     [width, pointWidth, maxSteps]
   );
 
+  // set default value
   useEffect(() => {
     if (defaultValue) {
       if (values) {
@@ -85,6 +88,7 @@ const Range = ({
       setValue(e.clientX - offset);
   };
 
+  // on mouse release drag point
   const handleMouseDown = (e) => {
     e.stopPropagation();
     e.preventDefault();
