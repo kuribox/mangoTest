@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./range.module.css";
+import Point from "./Point";
 
 const Range = ({
   min = 30,
@@ -13,24 +14,16 @@ const Range = ({
 }) => {
   const [minValue, setMinValue] = useState(null);
   const [maxValue, setMaxValue] = useState(null);
-  const [maxSteps] = useState(values ? values.length - 1 : max - min);
 
   const [result, setResult] = useState({
     min: values ? values[0] : min,
     max: values ? values[values.length - 1] : max,
   });
 
-  const [pointWidth, setPointWidth] = useState(1);
   const [labelSize, seLabelSize] = useState(null);
+  const [width, setWidth] = useState(null);
 
-  const [isActiveMin, setIsActiveMin] = useState(false);
-  const [isActiveMax, setIsActiveMax] = useState(false);
-
-  const rangeRef = useRef(null);
-  const minRef = useRef(null);
-  const maxRef = useRef(null);
   const ref = useRef(null);
-  const rangeContainerRef = useRef(null);
 
   useEffect(() => {
     let LabelSize = 0;
@@ -48,127 +41,17 @@ const Range = ({
     if (suffix) LabelSize += (suffix.length + 1) * fontSize;
 
     seLabelSize(LabelSize);
-    setMaxValue(ref.current.parentNode.offsetWidth - 2 * LabelSize);
-  }, []); // Get width of parent element
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (maxRef.current?.offsetWidth || minRef.current?.offsetWidth) {
-        setPointWidth(maxRef.current.offsetWidth);
-        setMinValue(maxRef.current.offsetWidth);
-      }
-    }, 50);
-  }, [maxRef, minRef]); // Get width of parent element
+    // Valores iniciales
+    setMinValue(30);
+    setMaxValue(ref.current.parentNode.offsetWidth - 2 * LabelSize);
+
+    setWidth(ref.current.parentNode.offsetWidth - 2 * LabelSize);
+  }, []); // Get width of parent element
 
   useEffect(() => {
     if (onChange) onChange(result);
   }, [result]);
-
-  // Update min drag position
-  const handleMinDrag = (e) => {
-    if (e.clientX - labelSize < maxValue && e.clientX - labelSize >= pointWidth)
-      setMinValue(e.clientX - labelSize);
-  };
-
-  // Update max drag position
-  const handleMaxDrag = (e) => {
-    if (
-      e.clientX - labelSize > minValue &&
-      e.clientX - labelSize <= rangeContainerRef.current.offsetWidth
-    )
-      setMaxValue(e.clientX - labelSize);
-  };
-
-  const handleMinMouseDown = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setIsActiveMin(true);
-
-    document.body.style.cursor = "grab";
-    window.addEventListener("mousemove", handleMinDrag);
-    window.addEventListener("mouseup", handleMinMouseUp);
-  };
-
-  const handleMaxMouseDown = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setIsActiveMax(true);
-
-    document.body.style.cursor = "grab";
-    window.addEventListener("mousemove", handleMaxDrag);
-    window.addEventListener("mouseup", handleMaxMouseUp);
-  };
-
-  // on mouse up min drag point, set most close value to result
-  const handleMinMouseUp = (e) => {
-    document.body.style.cursor = "auto";
-    const width = rangeContainerRef.current.offsetWidth;
-
-    let stepValue = null;
-    if (values) {
-      stepValue = Math.round(
-        (e.clientX - labelSize) / ((width - pointWidth) / maxSteps)
-      );
-
-      if (!values[stepValue]) stepValue = 0;
-      else if (values.findIndex((c) => c === result.max) <= stepValue)
-        stepValue = stepValue - 1;
-
-      setResult({ ...result, min: values[stepValue] });
-    } else {
-      stepValue = Math.round(
-        (e.clientX - labelSize) / ((width - pointWidth) / maxSteps)
-      );
-
-      if (stepValue % step !== 0) stepValue = stepValue - (stepValue % step);
-      if (stepValue + min >= result.max) stepValue = stepValue - step;
-
-      setResult({ ...result, min: stepValue + min });
-    }
-
-    if (stepValue !== null) {
-      setMinValue(stepValue * ((width - pointWidth) / maxSteps) + pointWidth);
-    }
-    setIsActiveMin(false);
-
-    window.removeEventListener("mousemove", handleMinDrag);
-    window.removeEventListener("mouseup", handleMinMouseUp);
-  };
-
-  // on mouse up max drag point, set most close value to result
-  const handleMaxMouseUp = (e) => {
-    document.body.style.cursor = "auto";
-
-    const width = rangeContainerRef.current.offsetWidth;
-
-    let stepValue = null;
-    if (values) {
-      stepValue = Math.round(
-        (e.clientX - labelSize) / ((width - pointWidth) / maxSteps)
-      );
-      if (!values[stepValue]) stepValue = values.length - 1;
-      else if (values.findIndex((c) => c === result.min) >= stepValue)
-        stepValue = stepValue + 1;
-
-      setResult({ ...result, max: values[stepValue] });
-    } else {
-      stepValue = Math.round(
-        (e.clientX - labelSize) / ((width - pointWidth) / maxSteps)
-      );
-      if (stepValue % step !== 0) stepValue = stepValue + (stepValue % step);
-      if (stepValue + min <= result.min) stepValue = stepValue + step;
-
-      setResult({ ...result, max: stepValue + min });
-    }
-
-    if (stepValue !== null) {
-      setMaxValue(stepValue * ((width - pointWidth) / maxSteps) + pointWidth);
-    }
-    setIsActiveMax(false);
-
-    window.removeEventListener("mousemove", handleMaxDrag);
-    window.removeEventListener("mouseup", handleMaxMouseUp);
-  };
 
   if (!labelSize) return <div ref={ref} />;
 
@@ -177,41 +60,48 @@ const Range = ({
       <div className={styles.value} style={{ fontSize, width: labelSize }}>
         {suffix ? `${result.min} ${suffix}` : result.min}
       </div>
-      <div ref={rangeContainerRef} style={{ flex: 1 }}>
+      <div style={{ flex: 1 }}>
         {(!values || (values && values.length > 1)) && (
-          <div ref={rangeRef} className={styles.range}>
+          <div className={styles.range}>
             <div className={styles.bar} />
             <div
               className={styles.selectedBar}
               style={{
                 width: maxValue - minValue,
-                left: `${minValue - pointWidth / 2}px`,
+                left: `${minValue - 30 / 2}px`,
               }}
             />
-            <div
-              ref={minRef}
-              className={`${styles.point} ${
-                isActiveMin ? styles.dragging : ""
-              }`}
-              style={{
-                left: `${minValue - pointWidth}px`,
+            <Point
+              min={min}
+              max={max}
+              step={step}
+              values={values}
+              offset={labelSize}
+              pointWidth={30}
+              defaultValue={minValue}
+              limitMax={maxValue}
+              width={width}
+              onChange={(r, val) => {
+                setResult({ ...result, min: r });
+                setMinValue(val);
               }}
-              onMouseDown={handleMinMouseDown}
-            >
-              <div className={styles.circle} />
-            </div>
-            <div
-              ref={maxRef}
-              className={`${styles.point} ${
-                isActiveMax ? styles.dragging : ""
-              }`}
-              style={{
-                left: `${maxValue - pointWidth}px`,
+            />
+
+            <Point
+              min={min}
+              max={max}
+              step={step}
+              values={values}
+              offset={labelSize}
+              pointWidth={30}
+              defaultValue={maxValue}
+              limitMin={minValue}
+              width={width}
+              onChange={(r, val) => {
+                setResult({ ...result, max: r });
+                setMaxValue(val);
               }}
-              onMouseDown={handleMaxMouseDown}
-            >
-              <div className={styles.circle} />
-            </div>
+            />
           </div>
         )}
       </div>
