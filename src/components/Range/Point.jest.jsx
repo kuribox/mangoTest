@@ -53,10 +53,10 @@ describe("Point component", () => {
     fireEvent.mouseMove(point, { clientX: 200 });
     fireEvent.mouseUp(point, { clientX: 200 });
 
-    expect(point).toHaveStyle(`left: 199.09px`);
+    expect(point).toHaveStyle(`left: 185.45px`);
     expect(defaultProps.onChange).toHaveBeenCalledWith(
-      74,
-      199.09 + defaultProps.pointWidth
+      69,
+      185.45 + defaultProps.pointWidth
     );
   });
 
@@ -69,14 +69,14 @@ describe("Point component", () => {
     fireEvent.mouseMove(point, { clientX: 100 });
     fireEvent.mouseUp(point, { clientX: 100 });
 
-    expect(point).toHaveStyle(`left: 100.91px`);
+    expect(point).toHaveStyle(`left: 84.55px`);
     expect(defaultProps.onChange).toHaveBeenCalledWith(
-      38,
-      100.91 + defaultProps.pointWidth
+      32,
+      84.55 + defaultProps.pointWidth
     );
   });
 
-  it("handles mouse down and mouse up to 3 correctly", async () => {
+  it("handles mouse down and mouse up to 0 correctly", async () => {
     const { getByTestId } = await render(<Point {...defaultProps} />);
 
     let point = getByTestId("point-test");
@@ -85,10 +85,10 @@ describe("Point component", () => {
     fireEvent.mouseMove(point, { clientX: 3 });
     fireEvent.mouseUp(point, { clientX: 3 });
 
-    expect(point).toHaveStyle(`left: 2.73px`);
+    expect(point).toHaveStyle(`left: 0.00px`);
     expect(defaultProps.onChange).toHaveBeenCalledWith(
-      2,
-      2.73 + defaultProps.pointWidth
+      1,
+      defaultProps.pointWidth
     );
   });
 

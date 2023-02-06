@@ -16,6 +16,7 @@ const Point = ({
   defaultValue,
   width,
   value: valueProp,
+  XOffset,
 }) => {
   const [value, setValue] = useState(null);
   const [result, setResult] = useState(null);
@@ -74,22 +75,16 @@ const Point = ({
 
   // Update drag position
   const handleDrag = (e) => {
-    if (
-      limitMax &&
-      e.clientX - offset < limitMax &&
-      e.clientX - offset >= pointWidth
-    )
-      setValue(e.clientX - offset);
+    const x = e.clientX - XOffset + pointWidth / 2;
 
-    if (
-      limitMin &&
-      e.clientX - offset > limitMin &&
-      e.clientX - offset <= width
-    )
-      setValue(e.clientX - offset);
+    if (limitMax && x - offset < limitMax && x - offset >= pointWidth)
+      setValue(x - offset);
+
+    if (limitMin && x - offset > limitMin && x - offset <= width)
+      setValue(x - offset);
 
     if (!limitMax && !limitMin) {
-      setValue(e.clientX - offset);
+      setValue(x - offset);
     }
   };
 
@@ -107,28 +102,29 @@ const Point = ({
   // on mouse up drag point, set most close value to result
   const handleMouseUp = (e) => {
     document.body.style.cursor = "auto";
+    const x = e.clientX - XOffset - pointWidth / 2;
 
     let stepValue = null;
     if (values) {
-      stepValue = getPointPosition(e.clientX - offset);
+      stepValue = getPointPosition(x - offset);
 
       if (!values[stepValue]) stepValue = getPointPosition(defaultValue);
 
       if (limitMin) {
         const limitPoint = getPointPosition(limitMin);
-        if (e.clientX - offset <= limitMin || stepValue <= limitPoint)
+        if (x - offset <= limitMin || stepValue <= limitPoint)
           stepValue = limitPoint + 1;
       }
 
       if (limitMax) {
         const limitPoint = getPointPosition(limitMax);
-        if (e.clientX - offset >= limitMax || stepValue >= limitPoint)
+        if (x - offset >= limitMax || stepValue >= limitPoint)
           stepValue = limitPoint - 1;
       }
 
       setResult(values[stepValue]);
     } else {
-      stepValue = getPointPosition(e.clientX - offset);
+      stepValue = getPointPosition(x - offset);
 
       if (stepValue % step !== 0) stepValue = stepValue - (stepValue % step);
 
@@ -137,13 +133,13 @@ const Point = ({
 
       if (limitMin) {
         const limitPoint = getPointPosition(limitMin - pointWidth);
-        if (e.clientX - offset <= limitMin || stepValue <= limitPoint)
+        if (x - offset <= limitMin || stepValue <= limitPoint)
           stepValue = limitPoint + step;
       }
 
       if (limitMax) {
         const limitPoint = getPointPosition(limitMax - pointWidth);
-        if (e.clientX - offset >= limitMax || stepValue >= limitPoint)
+        if (x - offset >= limitMax || stepValue >= limitPoint)
           stepValue = limitPoint - step;
       }
 
@@ -195,6 +191,7 @@ Point.propTypes = {
   pointWidth: PropTypes.number,
   defaultValue: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
+  XOffset: PropTypes.number,
 };
 
 Point.defaultProps = {
@@ -204,6 +201,7 @@ Point.defaultProps = {
   step: 1,
   pointWidth: 30,
   offset: 0,
+  XOffset: 0,
 };
 
 export default Point;

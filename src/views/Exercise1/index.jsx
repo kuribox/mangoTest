@@ -36,7 +36,9 @@ const Exercise1 = () => {
 
   return (
     <div className={styles.container}>
-      <Range min={values.min} max={values.max} suffix="€" />
+      <div style={{ width: "70%" }}>
+        <Range min={values.min} max={values.max} suffix="€" />
+      </div>
     </div>
   );
 };

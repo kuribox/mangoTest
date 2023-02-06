@@ -15,6 +15,7 @@ const Range = ({ min, max, values, suffix, step, onChange, fontSize }) => {
 
   const [labelSize, seLabelSize] = useState(null);
   const [width, setWidth] = useState(null);
+  const [XOffset, setXoffset] = useState(null);
 
   const ref = useRef(null);
 
@@ -39,6 +40,7 @@ const Range = ({ min, max, values, suffix, step, onChange, fontSize }) => {
     setMinValue(30);
     setMaxValue(ref.current.parentNode.offsetWidth - 2 * LabelSize);
 
+    setXoffset(ref.current.parentNode.getBoundingClientRect().left);
     setWidth(ref.current.parentNode.offsetWidth - 2 * LabelSize);
   }, []); // Get width of parent element
 
@@ -85,6 +87,7 @@ const Range = ({ min, max, values, suffix, step, onChange, fontSize }) => {
               values={values}
               offset={labelSize}
               pointWidth={30}
+              XOffset={XOffset}
               value={result.min}
               defaultValue={minValue}
               limitMax={maxValue}
@@ -103,6 +106,7 @@ const Range = ({ min, max, values, suffix, step, onChange, fontSize }) => {
               values={values}
               offset={labelSize}
               pointWidth={30}
+              XOffset={XOffset}
               defaultValue={maxValue}
               value={result.max}
               limitMin={minValue}

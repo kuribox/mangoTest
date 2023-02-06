@@ -31,7 +31,9 @@ const Exercise2 = () => {
 
   return (
     <div className={styles.container}>
-      <Range values={values} suffix="€" />
+      <div style={{ width: '30%'}}>
+        <Range values={values} suffix="€" />
+      </div>
     </div>
   );
 };
