@@ -5,7 +5,7 @@ import Exercise1 from "./views/Exercise1";
 import Exercise2 from "./views/Exercise2";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./index.scss";
+import "./index.css";
 
 const router = createBrowserRouter([
   {
