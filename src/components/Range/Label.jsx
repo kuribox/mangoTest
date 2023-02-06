@@ -39,6 +39,11 @@ const Label = ({ name = "", text, suffix, style, enableEdit, onChange }) => {
             setValue(e.target.value);
           }}
           onKeyDown={handleKeyDown}
+          onKeyPress={(event) => {
+            if (!/[0-9]/.test(event.key)) {
+              event.preventDefault();
+            }
+          }}
         />
       ) : (
         `${value} ${suffix}`
