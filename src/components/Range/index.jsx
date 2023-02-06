@@ -152,7 +152,7 @@ Range.defaultProps = {
   min: 1,
   max: 10,
   step: 1,
-  fontSize: 15,
+  fontSize: 16,
   suffix: "",
 };
 

@@ -10,7 +10,8 @@ const Exercise2 = () => {
     try {
       const response = await getExercise2();
 
-      if (response && Array.isArray(response.values)) setValues(response.values);
+      if (response && Array.isArray(response.values))
+        setValues(response.values);
       else setValues(false);
     } catch (error) {
       setValues(false);
@@ -31,7 +32,7 @@ const Exercise2 = () => {
 
   return (
     <div className={styles.container}>
-      <div style={{ width: '30%'}}>
+      <div className={styles.card} style={{ width: "40%" }}>
         <Range values={values} suffix="€" />
       </div>
     </div>

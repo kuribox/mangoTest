@@ -36,7 +36,7 @@ const Exercise1 = () => {
 
   return (
     <div className={styles.container}>
-      <div style={{ width: "70%" }}>
+      <div className={styles.card} style={{ width: "70%" }}>
         <Range min={values.min} max={values.max} suffix="€" />
       </div>
     </div>
