@@ -46,11 +46,12 @@ const Range = ({ min, max, values, suffix, step, onChange, fontSize }) => {
     if (onChange) onChange(result);
   }, [result]);
 
-  if (!labelSize) return <div ref={ref} />;
+  if (!labelSize || !width) return <div ref={ref} />;
 
   return (
-    <div ref={ref} className={styles.container}>
+    <div ref={ref} className={styles.container} data-testid="range-container">
       <Label
+        name="left"
         text={String(result.min)}
         suffix={suffix}
         style={{ fontSize, width: labelSize }}
@@ -70,12 +71,14 @@ const Range = ({ min, max, values, suffix, step, onChange, fontSize }) => {
             <div className={styles.bar} />
             <div
               className={styles.selectedBar}
+              data-testid="selected-bar"
               style={{
                 width: maxValue - minValue,
                 left: `${minValue - 30 / 2}px`,
               }}
             />
             <Point
+              name="min"
               min={min}
               max={max}
               step={step}
@@ -93,6 +96,7 @@ const Range = ({ min, max, values, suffix, step, onChange, fontSize }) => {
             />
 
             <Point
+              name="max"
               min={min}
               max={max}
               step={step}
@@ -112,6 +116,7 @@ const Range = ({ min, max, values, suffix, step, onChange, fontSize }) => {
         )}
       </div>
       <Label
+        name="right"
         text={String(result.max)}
         suffix={suffix}
         style={{ fontSize, width: labelSize }}

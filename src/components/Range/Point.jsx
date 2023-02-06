@@ -2,7 +2,8 @@ import React, { useCallback, useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./range.module.css";
 
-const Range = ({
+const Point = ({
+  name,
   min,
   max,
   values,
@@ -86,6 +87,10 @@ const Range = ({
       e.clientX - offset <= width
     )
       setValue(e.clientX - offset);
+
+    if (!limitMax && !limitMin) {
+      setValue(e.clientX - offset);
+    }
   };
 
   // on mouse release drag point
@@ -127,6 +132,9 @@ const Range = ({
 
       if (stepValue % step !== 0) stepValue = stepValue - (stepValue % step);
 
+      if (stepValue + min < min) stepValue = 0;
+      if (stepValue + min > max) stepValue = max - min;
+
       if (limitMin) {
         const limitPoint = getPointPosition(limitMin - pointWidth);
         if (e.clientX - offset <= limitMin || stepValue <= limitPoint)
@@ -143,8 +151,10 @@ const Range = ({
     }
 
     if (stepValue !== null) {
-      const newValue =
-        stepValue * ((width - pointWidth) / maxSteps) + pointWidth;
+      const newValue = Number(
+        (stepValue * ((width - pointWidth) / maxSteps) + pointWidth).toFixed(2)
+      );
+
       setValue(newValue);
       if (onChange)
         onChange(values ? values[stepValue] : stepValue + min, newValue);
@@ -155,14 +165,16 @@ const Range = ({
     window.removeEventListener("mouseup", handleMouseUp);
   };
 
-  if (!value || !result) return null;
+  if (!value || result === null) return null;
+
   return (
     <div
       ref={pointRef}
       className={`${styles.point} ${isActive ? styles.dragging : ""}`}
       style={{
-        left: `${value - pointWidth}px`,
+        left: `${(value - pointWidth).toFixed(2)}px`,
       }}
+      data-testid={`point-${name}`}
       onMouseDown={handleMouseDown}
     >
       <div className={styles.circle} />
@@ -170,7 +182,8 @@ const Range = ({
   );
 };
 
-PropTypes.propTypes = {
+Point.propTypes = {
+  name: PropTypes.string,
   min: PropTypes.number,
   max: PropTypes.number,
   values: PropTypes.array,
@@ -180,8 +193,17 @@ PropTypes.propTypes = {
   limitMin: PropTypes.number,
   onChange: PropTypes.func,
   pointWidth: PropTypes.number,
-  defaultValue: PropTypes.number,
-  width: PropTypes.number,
+  defaultValue: PropTypes.number.isRequired,
+  width: PropTypes.number.isRequired,
 };
 
-export default Range;
+Point.defaultProps = {
+  name: "",
+  min: 1,
+  max: 10,
+  step: 1,
+  pointWidth: 30,
+  offset: 0,
+};
+
+export default Point;

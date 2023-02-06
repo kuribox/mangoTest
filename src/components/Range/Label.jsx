@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./range.module.css";
 
-const Label = ({ text, suffix, style, enableEdit, onChange }) => {
+const Label = ({ name = "", text, suffix, style, enableEdit, onChange }) => {
   const [editMode, setEditMode] = useState(false);
   const [value, setValue] = useState(text);
 
@@ -20,6 +20,7 @@ const Label = ({ text, suffix, style, enableEdit, onChange }) => {
 
   return (
     <div
+      data-testid={`label-${name}`}
       className={`${styles.value} ${enableEdit ? styles.editable : ""}`}
       style={style}
       onClick={() => {
@@ -30,6 +31,7 @@ const Label = ({ text, suffix, style, enableEdit, onChange }) => {
     >
       {editMode ? (
         <input
+          data-testid="label-input"
           autoFocus
           className={styles.input}
           value={value}
