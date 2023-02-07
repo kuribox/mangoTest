@@ -1,11 +1,10 @@
 {
-  "name": "qameetup",
+  "name": "mangotest",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview",
     "test": "jest",
     "test:watch": "jest --watch"
   },
